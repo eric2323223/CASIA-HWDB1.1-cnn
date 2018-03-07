@@ -20,3 +20,8 @@ for i, (bitmap, tagcode) in enumerate(utils.read_gnt_in_directory('../data/test2
     # print("GB code: {}, chinese char:{}".format(hex(tagcode), gb2312_to_character(hex(tagcode)[2:])))
 
 print(len(table))
+print(table)
+total_sample = 0
+for key, value in table.items():
+    total_sample = total_sample + value
+print(total_sample)
