@@ -8,16 +8,30 @@ def load_image(file):
     x = np.expand_dims(x[:,:,0:1], axis=0)
     return x
 
-def topN(result, n):
+def topN(result, dict, n):
     # indexes = result.argsort()[-(n):][::-1]
     indexes = np.argsort(result)
     indexes = indexes[0][::-1][:n]
     output = []
     for idx in indexes:
         # print(idx, result[0][idx])
-        output.append((idx, result[0][idx]))
+        output.append((dict.get(idx), result[0][idx]))
+        # output.append(bytes(dict.get(idx)).decode('gb2312'), result[0][idx])
     return output
 
+
+def loadMapping(file):
+    f = open(file, 'r')
+    entries = (f.read().split('\n'))
+    dict = {}
+    for entry in entries:
+        k = int(entry.split(',')[0])
+        v = entry.split(',')[1]
+        dict[k] = v
+    # print(dict)
+    return dict
+
+mapping = loadMapping('subset_GBcode')
 # load json and create model
 json_file = open('../model/1520265573-model.json', 'r')
 loaded_model_json = json_file.read()
@@ -36,4 +50,4 @@ x = load_image('../data/predict/lin4.png')
 # print(x.shape)
 result = loaded_model.predict(x)
 # print(result.shape)
-print(topN(result, 5))
+print(topN(result, mapping, 5))
