@@ -1,4 +1,5 @@
  <html>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script type="text/javascript">
     var canvas, ctx, flag = false,
         prevX = 0,
@@ -8,7 +9,7 @@
         dot_flag = false;
 
     var x = "black",
-        y = 2;
+        y = 10;
 
     function init() {
         canvas = document.getElementById('can');
@@ -28,6 +29,8 @@
         canvas.addEventListener("mouseout", function (e) {
             findxy('out', e)
         }, false);
+
+
     }
 
     function color(obj) {
@@ -71,10 +74,10 @@
 
     function erase() {
         <!--var m = confirm("Want to clear");-->
-        if (m) {
-            ctx.clearRect(0, 0, w, h);
-            document.getElementById("canvasimg").style.display = "none";
-        }
+
+        ctx.clearRect(0, 0, w, h);
+        document.getElementById("canvasimg").style.display = "none";
+
     }
 
     function save() {
@@ -84,7 +87,7 @@
         <!--document.getElementById("canvasimg").style.display = "inline";-->
         var dataURL = canvas.toDataURL();
 
-        window.fetch('http://localhost:8888/hccr', {
+        window.fetch('http://a156m7l34ypztjs.cn.hsbc:8888/hccr', {
             method: 'post',
             body: dataURL
         }).then(function(response){
@@ -104,7 +107,7 @@
                     pro = parseFloat(data[(key)])
                     pro = pro*100
 
-                    html = html + "<p>"+key+"        "+pro.toString()+"%"+"</p>"
+                    html = html + "<p style=\"font-size: 30;\">"+key+"        "+pro.toString()+"%"+"</p>"
                 }
                 document.getElementById("prediction").innerHTML = html;
               });
@@ -147,6 +150,8 @@
     </script>
 
     <body onload="init()">
+        <div id="char_list_desc">NOTE: The model is only trained to recognize below 200 chinese characters. </div>
+
         <canvas id="can" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>
         <!--<div style="position:absolute;top:12%;left:43%;">Choose Color</div>-->
         <!--<div style="position:absolute;top:15%;left:45%;width:10px;height:10px;background:green;" id="green" onclick="color(this)"></div>-->
@@ -158,8 +163,9 @@
         <!--<div style="position:absolute;top:20%;left:43%;">Eraser</div>-->
         <!--<div style="position:absolute;top:22%;left:45%;width:15px;height:15px;background:white;border:2px solid;" id="white" onclick="color(this)"></div>-->
         <!--<img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">-->
-        <div id="prediction" style="position:absolute;top:10%;left:52%;" ></div>
-        <input type="button" value="save" id="btn" size="30" onclick="save()" style="position:absolute;top:55%;left:10%;">
-        <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:55%;left:15%;">
+        <div id="prediction" style="position:relative;top:10%;left:52%;" ></div>
+        <input type="button" value="recognize" id="btn" size="30" onclick="save()" style="position:absolute;top:60%;left:10%;">
+        <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:60%;left:15%;">
+        <div id="char_list"></div>
     </body>
     </html>
