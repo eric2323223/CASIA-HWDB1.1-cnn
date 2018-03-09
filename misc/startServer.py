@@ -5,6 +5,7 @@ from keras.preprocessing import image
 import numpy as np
 import base64
 import os
+from PIL import Image
 
 class MainHandler(tornado.web.RequestHandler):
     def loadMapping(self, file):
@@ -31,12 +32,31 @@ class MainHandler(tornado.web.RequestHandler):
             # output.append(bytes(dict.get(idx)).decode('gb2312'), result[0][idx])
         return output
 
-    def load_image(self, file):
-        print("Image file size: {}".format(os.path.getsize(file)))
-        img = image.load_img(file, target_size=(64, 64))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x[:, :, 0:1], axis=0)
-        return x
+    # def load_image(self, file):
+    #     print("Image file size: {}".format(os.path.getsize(file)))
+    #     img = image.load_img(file, target_size=(64, 64))
+    #     x = image.img_to_array(img)
+    #     x = np.expand_dims(x[:, :, 0:1], axis=0)
+    #
+    #     np.set_printoptions(threshold=np.nan)
+    #     print(x)
+    #     # set background from 0 to 255
+    #     x[x==0]=255
+    #
+    #     print(x)
+    #     return x
+
+    # 4th layer, index=3
+    def load_received_image(self, file):
+        im = Image.open(file)
+        im = np.array(im.resize((64, 64), Image.ANTIALIAS))
+
+        im = 255 - im #invert color
+
+        # plt.imshow(im[:,:,3])
+        # plt.show()
+        im = np.expand_dims(im[:, :, 3:], axis=0)
+        return im
 
     def classify(self, file):
         mapping = self.loadMapping('../src/subset_GBcode')
@@ -54,7 +74,7 @@ class MainHandler(tornado.web.RequestHandler):
         # score = loaded_model.evaluate(X, Y, verbose=0)
         # print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1 ] *100))
 
-        x = self.load_image(file)
+        x = self.load_received_image(file)
         # print(x.shape)
         result = loaded_model.predict(x)
         # print(result.shape)
@@ -70,7 +90,8 @@ class MainHandler(tornado.web.RequestHandler):
         imgStr = imgStr.split(",")[1]
         print(imgStr)
         with open('testImage.png', 'wb') as f:
-            f.write(base64.b64decode(imgStr))
+            f.write(base64.urlsafe_b64decode(imgStr))
+            # f.write(base64.b64decode(imgStr))
         output = self.classify("testImage.png")
         print(output)
         self.write(output)
