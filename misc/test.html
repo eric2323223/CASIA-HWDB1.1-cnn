@@ -1,6 +1,6 @@
- <html>
+  <html>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script type="text/javascript">
+    <script>
     var canvas, ctx, flag = false,
         prevX = 0,
         currX = 0,
@@ -29,37 +29,6 @@
         canvas.addEventListener("mouseout", function (e) {
             findxy('out', e)
         }, false);
-
-
-    }
-
-    function color(obj) {
-        switch (obj.id) {
-            case "green":
-                x = "green";
-                break;
-            case "blue":
-                x = "blue";
-                break;
-            case "red":
-                x = "red";
-                break;
-            case "yellow":
-                x = "yellow";
-                break;
-            case "orange":
-                x = "orange";
-                break;
-            case "black":
-                x = "black";
-                break;
-            case "white":
-                x = "white";
-                break;
-        }
-        if (x == "white") y = 20;
-        else y = 10;
-
     }
 
     function draw() {
@@ -74,17 +43,13 @@
 
     function erase() {
         <!--var m = confirm("Want to clear");-->
-
         ctx.clearRect(0, 0, w, h);
         document.getElementById("canvasimg").style.display = "none";
-
     }
 
+
     function save() {
-        <!--document.getElementById("canvasimg").style.border = "2px solid";-->
         var dataURL = canvas.toDataURL("image/bmp");
-        <!--document.getElementById("canvasimg").src = dataURL;-->
-        <!--document.getElementById("canvasimg").style.display = "inline";-->
         var dataURL = canvas.toDataURL();
 
         window.fetch('http://a156m7l34ypztjs.cn.hsbc:8888/hccr', {
@@ -106,8 +71,8 @@
                     key = keys[i]
                     pro = parseFloat(data[(key)])
                     pro = pro*100
-
-                    html = html + "<p style=\"font-size: 30;\">"+key+"        "+pro.toString()+"%"+"</p>"
+                    pro = pro.toFixed(4)
+                    html = html + "<p style=\"font-size: 30;\">"+key+"        "+pro+"%"+"</p>"
                 }
                 document.getElementById("prediction").innerHTML = html;
               });
@@ -147,25 +112,54 @@
             }
         }
     }
+
     </script>
 
-    <body onload="init()">
-        <div id="char_list_desc">NOTE: The model is only trained to recognize below 200 chinese characters. </div>
+    <style>
 
-        <canvas id="can" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>
-        <!--<div style="position:absolute;top:12%;left:43%;">Choose Color</div>-->
-        <!--<div style="position:absolute;top:15%;left:45%;width:10px;height:10px;background:green;" id="green" onclick="color(this)"></div>-->
-        <!--<div style="position:absolute;top:15%;left:46%;width:10px;height:10px;background:blue;" id="blue" onclick="color(this)"></div>-->
-        <!--<div style="position:absolute;top:15%;left:47%;width:10px;height:10px;background:red;" id="red" onclick="color(this)"></div>-->
-        <!--<div style="position:absolute;top:17%;left:45%;width:10px;height:10px;background:yellow;" id="yellow" onclick="color(this)"></div>-->
-        <!--<div style="position:absolute;top:17%;left:46%;width:10px;height:10px;background:orange;" id="orange" onclick="color(this)"></div>-->
-        <!--<div style="position:absolute;top:17%;left:47%;width:10px;height:10px;background:black;" id="black" onclick="color(this)"></div>-->
-        <!--<div style="position:absolute;top:20%;left:43%;">Eraser</div>-->
-        <!--<div style="position:absolute;top:22%;left:45%;width:15px;height:15px;background:white;border:2px solid;" id="white" onclick="color(this)"></div>-->
-        <!--<img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">-->
-        <div id="prediction" style="position:relative;top:10%;left:52%;" ></div>
-        <input type="button" value="recognize" id="btn" size="30" onclick="save()" style="position:absolute;top:60%;left:10%;">
-        <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:60%;left:15%;">
-        <div id="char_list"></div>
+        .my-container{
+            display: flex;
+        }
+
+        .my-container .item{
+            flex: 1;
+        }
+        .button-row{
+            margin: 20px;
+        }
+    </style>
+
+
+    <body onload="init()">
+        <div class="">
+            <div class="">
+                <div id="char_list_desc" class="alert alert-info">NOTE: The model is only trained to recognize 200 chinese characters.  </div>
+                <div id="char_list"></div>
+            </div>
+            <div class="my-container">
+            <!--<div class="col"></div>-->
+                <div class="item">
+                    <canvas id="can" width="400" height="400" style="border:1px solid #000000;"></canvas>
+                </div>
+                <div class="item">
+                    <div id="prediction" ></div>
+                </div>
+
+            </div>
+            <div class="button-row">
+                <input type="button" class="btn btn-primary" value="recognize" id="btn" size="30" onclick="save()">
+                <input type="button" class="btn btn-secondary" value="clear" id="clr" size="23" onclick="erase()">
+
+            </div>
+
+        </div>
+
+            <!--<div id="char_list_desc" class="alert alert-info">NOTE: The model is only trained to recognize below 200 chinese characters. </div>-->
+
+        <!--<canvas id="can" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>-->
+        <!--<div id="prediction" style="position:relative;top:10%;left:52%;" ></div>-->
+        <!--<input type="button" class="btn btn-primary" value="recognize" id="btn" size="30" onclick="save()" style="position:absolute;top:67%;left:10%;">-->
+        <!--<input type="button" class="btn btn-secondary" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:67%;left:17%;">-->
+        <!--<div id="char_list"></div>-->
     </body>
     </html>
